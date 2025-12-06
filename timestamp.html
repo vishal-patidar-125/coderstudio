@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Current Timestamp</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial; display:flex; align-items:center; justify-content:center; height:100vh; margin:0; background:#f6f8fa; }
+    .card { background:white; padding:2rem 2.5rem; border-radius:12px; box-shadow:0 6px 18px rgba(21,24,28,0.08); text-align:center; }
+    .time { font-size:1.5rem; font-weight:600; margin:0.5rem 0; }
+    .epoch { color:#6b7280; font-size:0.9rem; }
+    button { margin-top:1rem; padding:0.5rem 1rem; border-radius:8px; border:1px solid #e5e7eb; background:#111827; color:white; cursor:pointer; }
+    button:active { transform:translateY(1px); }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Current Timestamp</h1>
+    <div id="local" class="time">--</div>
+    <div id="epoch" class="epoch">Unix epoch: --</div>
+    <button id="copy">Copy ISO</button>
+  </div>
+
+  <script>
+    function update() {
+      const now = new Date();
+      const iso = now.toISOString();
+      const local = now.toLocaleString();
+      const epoch = Math.floor(now.getTime() / 1000);
+      document.getElementById('local').textContent = local;
+      document.getElementById('epoch').textContent = 'Unix epoch: ' + epoch;
+      return iso;
+    }
+
+    let latestISO = update();
+    setInterval(() => { latestISO = update(); }, 1000);
+
+    document.getElementById('copy').addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(latestISO);
+        const btn = document.getElementById('copy');
+        const old = btn.textContent;
+        btn.textContent = 'Copied!';
+        setTimeout(() => btn.textContent = old, 1200);
+      } catch (e) {
+        alert('Copy failed: ' + e);
+      }
+    });
+  </script>
+</body>
+</html>
